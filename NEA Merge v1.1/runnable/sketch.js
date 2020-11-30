@@ -115,7 +115,7 @@ function draw() {
     line(rows * s + 8, cols * s - s + 8, rows * s + 8, cols * s + 8);
 
     //player implementation
-    frameRate(60)
+    frameRate(s + 10);
     nodeMethods();
 }
 

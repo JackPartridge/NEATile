@@ -8,6 +8,7 @@ let additionX = 0;
 let additionY = 0;
 let moveCounter = 0;
 let keyCounter = 0;
+let colliding = false;
 
 class UserNode {
 
@@ -27,20 +28,36 @@ class UserNode {
     collisions() {
         switch (this.dir) {
             case "right":
-                if (this.i > rows - 1)
+                if (this.i > rows - 1) {
                     this.dir = null;
+                    colliding = true;
+                } else {
+                    colliding = false;
+                }
                 break;
             case "up":
-                if (this.j < 0)
+                if (this.j < 0) {
                     this.dir = null;
+                    colliding = true;
+                } else {
+                    colliding = false;
+                }
                 break;
             case "down":
-                if (this.j > cols - 1)
+                if (this.j > cols - 1) {
                     this.dir = null;
+                    colliding = true;
+                } else {
+                    colliding = false;
+                }
                 break;
             case "left":
-                if (this.i < 0)
+                if (this.i < 0) {
                     this.dir = null;
+                    colliding = true;
+                } else {
+                    colliding = false;
+                }
                 break;
         }
     }
@@ -51,9 +68,10 @@ class UserNode {
                 gameTimer = performance.now() - subtraction;
                 this.collisions();
                 if (!grid[this.i][this.j].walls[1] && !grid[this.i + 1][this.j].walls[3]) {
-                    this.x += (20);
-                } else{
-                    additionX = +(s / 2);
+                    this.x += (5);
+                } else {
+                    colliding = true;
+                    //additionX = +(s / 2);
                     //additionY = 0;
                     //this.x += (s / 2)
                 }
@@ -62,10 +80,11 @@ class UserNode {
                 gameTimer = performance.now() - subtraction;
                 this.collisions();
                 if (!grid[this.i][this.j].walls[0] && !grid[this.i][this.j - 1].walls[2]) {
-                    this.y -= (20);
-                } else{
+                    this.y -= (5);
+                } else {
+                    colliding = true;
                     //additionX = 0;
-                    additionY = -(s / 2);
+                    //additionY = -(s / 2);
                     //this.y -= (s / 2)
                 }
                 break;
@@ -73,10 +92,11 @@ class UserNode {
                 gameTimer = performance.now() - subtraction;
                 this.collisions();
                 if (!grid[this.i][this.j].walls[2] && !grid[this.i][this.j + 1].walls[0]) {
-                    this.y += (20);
-                } else{
+                    this.y += (5);
+                } else {
+                    colliding = true;
                     //additionX = 0;
-                    additionY = +(s / 2);
+                    //additionY = +(s / 2);
                     //this.y += (s / 2)
                 }
                 break;
@@ -84,9 +104,10 @@ class UserNode {
                 gameTimer = performance.now() - subtraction;
                 this.collisions();
                 if (!grid[this.i][this.j].walls[3] && !grid[this.i - 1][this.j].walls[1]) {
-                    this.x -= (20);
-                } else{
-                    additionX = -(s / 2);
+                    this.x -= (5);
+                } else {
+                    colliding = true;
+                    //additionX = -(s / 2);
                     //additionY = 0;
                     //this.x -= (s / 2)
                 }
@@ -94,10 +115,14 @@ class UserNode {
 
 
         }
-        if(keyCounter % 2 === 0 && keyCounter !== 2){
+
+        if (colliding) {
+            this.centralise();
+        }
+        /*if (keyCounter % 2 === 0 && keyCounter !== 2) {
             additionX = 0;
             additionY = 0;
-        }
+        }*/
 
         playerMoves++;
         this.i = Math.round(this.x / s);
@@ -156,13 +181,21 @@ class UserNode {
 
     show() {
         //player implementation
-        if (playerFinishedLevel) {
-            fill(220, 220, 220, 0);
-        }
         fill(40, 40, 180);
+        if (playerFinishedLevel) {
+            noStroke();
+            noFill();
+        }
         //console.log("RAW: " + this.x / s + ", " + this.y / s)
         //console.log("I AND J: " + this.i + ", " + this.j);
         rect(((this.x + (s / 2.67))) + 8 + additionX, ((this.y + (s / 2.67))) + 8 + additionY, (s) / 4, (s) / 4);
+    }
+
+    centralise() {
+        this.x = this.i * (s);
+        this.y = this.j * (s);
+        fill(40, 40, 180);
+        rect(((this.x + (s / 2.67))) + 8, ((this.y + (s / 2.67))) + 8, (s) / 4, (s) / 4);
     }
 }
 
@@ -192,6 +225,7 @@ function keyPressed() {
         default:
             userNode.dir = null;
     }
+    this.centralise();
 }
 
 /*let directionOfUser = undefined;
